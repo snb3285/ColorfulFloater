@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ColorfulFloater">
+
+    <com.jim28915.colorfulfloater.BackgroundView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:colorSegmentOne="@color/muted_red"
+        app:colorSegmentTwo="@color/muted_yellow"
+        app:colorSegmentThree="@color/muted_blue"
+        app:colorSegmentFour="@color/muted_green"
+        />
+
+    <com.jim28915.colorfulfloater.ColorfulFloaterView
+        android:id="@+id/colorful_floater"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:tileSize="24dp" />
+
+    <TextView android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/colorAccent"
+        android:fontFamily="@font/constantia"
+        android:textSize="24sp"
+        android:visibility="visible" />
+
+    <RelativeLayout android:id="@+id/arrowContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageButton android:id="@+id/moveLeft"
+            android:contentDescription="@string/move_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="20dp"
+            android:src="@drawable/button_custom_left"
+            android:onClick="moveLeft"/>
+
+        <ImageButton android:id="@+id/moveRight"
+            android:contentDescription="@string/move_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="20dp"
+            android:src="@drawable/button_custom_right"
+            android:onClick="moveRight"/>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
