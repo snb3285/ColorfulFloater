@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ColorfulFloater">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ColorfulFloater"
+    tools:showIn="@layout/activity_colorful_floater">
 
     <com.jim28915.colorfulfloater.BackgroundView
         android:id="@+id/background"
@@ -20,17 +22,27 @@
         android:id="@+id/colorful_floater"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        app:tileSize="24dp" />
+        />
 
     <TextView android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="@color/colorAccent"
-        android:fontFamily="@font/constantia"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        app:fontFamily="@font/constantia"/>
+
+    <TextView android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:textColor="@color/text_violet"
+        android:textSize="24sp"
+        android:visibility="visible"
+        app:fontFamily="@font/constantia"/>
 
     <RelativeLayout android:id="@+id/arrowContainer"
         android:layout_width="match_parent"

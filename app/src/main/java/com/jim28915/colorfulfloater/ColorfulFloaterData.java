@@ -36,10 +36,10 @@ public class ColorfulFloaterData {
      * mScore: Used to track the number of apples captured mMoveDelay: number of milliseconds
      * between floater movements. This will decrease as apples are captured.
      */
-
     private long mScore = 0;
     private  long mHighestScore = 0;
-    private long mMoveDelay = 600;
+    private long mMoveDelay = 1000;
+    private static final long moveDelay = 1000;
     private long mLastMove = 0;
 
     /**
@@ -48,14 +48,14 @@ public class ColorfulFloaterData {
      * number of tiles that will be drawn.
      */
 
-    private static int mTileSize = 60;
+    private static int mTileSize = 11;
 
     private static int mXTileCount;
     private static int mYTileCount;
 
     private static int mXOffset;
     private static int mYOffset;
-    private static int mFloaterSize = 4;
+    private static int mFloaterSize = 3;
     private static int mLevel = 1;
 
     private final Paint mPaint = new Paint();
@@ -153,7 +153,7 @@ public class ColorfulFloaterData {
     public void setLevel(int s) {
         if( s > 0 )
             mLevel = s;
-        mMoveDelay /= mLevel;
+        mMoveDelay = moveDelay/mLevel;
     }
 
     public TileInfo getFloater(int index) {
@@ -241,7 +241,6 @@ public class ColorfulFloaterData {
     public void setMatch(boolean match) {
         mMatch = match;
     }
-
 
     /**
      * Release all the object created.
@@ -416,12 +415,14 @@ public class ColorfulFloaterData {
                     break;
                 }
             }
-            if (numMatchedTiles >= getFloatSize() ) {
+            if (numMatchedTiles >= getFloatSize()) {
                 threeOrMore = true;
                 for (int delta = 0; delta < numMatchedTiles; delta++) {
                     if (isValidRowNumber(row + rowdelta * delta) && isValidColumnNumber(col + coldelta * delta)
                             && mTileGrid[col + coldelta * delta][row + rowdelta * delta].getColor() == startTile.getColor()) {
-                        mTileGrid[col + coldelta * delta][row + rowdelta * delta].setMatch(mMatched);
+                        if( mTileGrid[col + coldelta * delta][row + rowdelta * delta].getMatch() == mUnmatched ) {
+                            mTileGrid[col + coldelta * delta][row + rowdelta * delta].setMatch(mMatched);
+                        }
                     }
                 }
             }
@@ -702,7 +703,7 @@ public class ColorfulFloaterData {
         if (mTileGrid.length > 0) {
             for (int x = 0; x < mXTileCount; x += 1) {
                 for (int y = 0; y < mYTileCount; y += 1) {
-                    if (mTileGrid[x][y] != null && mTileGrid[x][y].getColor() > 0) {
+                    if (mTileGrid[x][y] instanceof TileInfo && mTileGrid[x][y].getColor() > 0) {
                         canvas.drawBitmap(mTileArray[mTileGrid[x][y].getColor()], mXOffset + x * mTileSize,
                                 mYOffset + y * mTileSize, mPaint);
                     }

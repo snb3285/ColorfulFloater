@@ -2,9 +2,9 @@ package com.jim28915.colorfulfloater;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.MenuInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,51 +20,73 @@ public class ColorfulFloater extends AppCompatActivity {
 
     private static String ICICLE_KEY = "colorfulFloater-view";
 
-    private com.jim28915.colorfulfloater.ColorfulFloaterView mColorfulFloaterView;
+    private ColorfulFloaterView mColorfulFloaterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_colorful_floater);
-        mColorfulFloaterView = (com.jim28915.colorfulfloater.ColorfulFloaterView) findViewById(R.id.colorful_floater);
+        setContentView(R.layout.activity_colorful_floater);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mColorfulFloaterView = (ColorfulFloaterView) findViewById(R.id.colorful_floater);
         mColorfulFloaterView.setDependentViews((TextView) findViewById(R.id.text),
-                findViewById(R.id.arrowContainer), findViewById(R.id.background));
-        mColorfulFloaterView.setOnTouchListener(handleTouch );
+                (TextView) findViewById(R.id.text2), findViewById(R.id.arrowContainer),
+                findViewById(R.id.background));
+        mColorfulFloaterView.setOnTouchListener(handleTouch);
 
         if (savedInstanceState == null) {
             // We were just launched -- set up a new game
-            mColorfulFloaterView.setMode(com.jim28915.colorfulfloater.ColorfulFloaterData.READY);
+            mColorfulFloaterView.setMode(ColorfulFloaterData.READY);
         } else {
             // We are being restored
             Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
             if (map != null) {
                 mColorfulFloaterView.restoreState(map);
             } else {
-                mColorfulFloaterView.setMode(com.jim28915.colorfulfloater.ColorfulFloaterData.PAUSE);
+                mColorfulFloaterView.setMode(ColorfulFloaterData.PAUSE);
             }
         }
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_colorful_floater, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_colorful_floater, menu);
+        return true;
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_number_of_block:
-                //
+            case R.id.three_block:
+                mColorfulFloaterView.setNumberOfBlock(3);
+                return true;
+            case R.id.four_block:
+                mColorfulFloaterView.setNumberOfBlock(4);
+                return true;
+            case R.id.five_block:
                 mColorfulFloaterView.setNumberOfBlock(5);
                 return true;
-            case R.id.action_select_level:
+            case R.id.six_block:
+                mColorfulFloaterView.setNumberOfBlock(6);
+                return true;
+            case R.id.seven_block:
+                mColorfulFloaterView.setNumberOfBlock(7);
+                return true;
+            case R.id.level_one:
+                // do something
+                mColorfulFloaterView.setLevel(1);
+                return true;
+            case R.id.level_three:
+                // do something
+                mColorfulFloaterView.setLevel(3);
+                return true;
+            case R.id.level_two:
                 // do something
                 mColorfulFloaterView.setLevel(2);
                 return true;
             default:
-                return super.onContextItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -73,7 +95,7 @@ public class ColorfulFloater extends AppCompatActivity {
      */
     public void moveLeft(View view) {
         // Do something in response to button click
-        if (mColorfulFloaterView.getGameState() == com.jim28915.colorfulfloater.ColorfulFloaterData.RUNNING) {
+        if (mColorfulFloaterView.getGameState() == ColorfulFloaterData.RUNNING) {
             mColorfulFloaterView.moveColorfulFloater(MOVE_LEFT);
         }
     }
@@ -83,7 +105,7 @@ public class ColorfulFloater extends AppCompatActivity {
      */
     public void moveRight(View view) {
         // Do something in response to button click
-        if (mColorfulFloaterView.getGameState() == com.jim28915.colorfulfloater.ColorfulFloaterData.RUNNING) {
+        if (mColorfulFloaterView.getGameState() == ColorfulFloaterData.RUNNING) {
             mColorfulFloaterView.moveColorfulFloater(MOVE_RIGHT);
         }
     }
@@ -91,7 +113,7 @@ public class ColorfulFloater extends AppCompatActivity {
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
         public boolean onTouch (View v, MotionEvent event){
-            if (mColorfulFloaterView.getGameState() == com.jim28915.colorfulfloater.ColorfulFloaterData.RUNNING) {
+            if (mColorfulFloaterView.getGameState() == ColorfulFloaterData.RUNNING) {
                 mColorfulFloaterView.rotateFloaters();
 
             } else {
@@ -107,7 +129,7 @@ public class ColorfulFloater extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // Pause the game along with the activity
-        mColorfulFloaterView.setMode(com.jim28915.colorfulfloater.ColorfulFloaterData.PAUSE);
+        mColorfulFloaterView.setMode(ColorfulFloaterData.PAUSE);
     }
 
     @Override

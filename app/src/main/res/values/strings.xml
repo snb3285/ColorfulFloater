@@ -1,11 +1,20 @@
 <resources>
     <string name="app_name">ColorfulFloater</string>
     <string name="action_settings">Settings</string>
-    <string name="action_number_of_block">Set the number of blocks</string>
-    <string name="action_select_level">Set the level</string>
+    <string name="action_number_of_block">Set number of blocks</string>
+    <string name="action_select_level">Set level</string>
     <string name="mode_ready">ColorfulFloater\nTouch Screen To Play</string>
     <string name="move_left">Moves the floater to the left</string>
     <string name="move_right">Moves the floater to the right</string>
     <string name="mode_pause">Paused\nTouch Screen To Resume</string>
     <string name="mode_lose">Game Over\nScore: %1$d \nTouch Screen To Play</string>
+    <string name="mode_score">Score: %1$d </string>
+    <string name="three_block">3 blocks</string>
+    <string name="four_block">4 blocks</string>
+    <string name="five_block">5 blocks</string>
+    <string name="six_block">6 blocks</string>
+    <string name="seven_block">7 blocks</string>
+    <string name="level_one">Level 1</string>
+    <string name="level_two">Level 2</string>
+    <string name="level_three">Level 3</string>
 </resources>

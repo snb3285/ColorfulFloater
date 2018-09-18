@@ -38,6 +38,11 @@ public class ColorfulFloaterView extends View {
     private TextView mStatusText;
 
     /**
+     * mScoreText: Displays the current score
+     */
+    private TextView mScoreText;
+
+    /**
      * mArrowsView: View which shows 2 arrows to signify 2 directions in which the floater can move
      */
     private View mArrowsView;
@@ -54,29 +59,22 @@ public class ColorfulFloaterView extends View {
      * date.
      */
 
-    private boolean mDoIt = false;
-
     private Handler mRedrawHandlerContinuous = new Handler();
     private Handler mRedrawHandlerStatic = new Handler();
 
-    private Runnable mUIRedrawRunnableContinuous = new Runnable() {
+    public void startRedrawing() {
+        mRedrawHandlerContinuous.post(mUIRedrawRunnableContinous);
+    }
+
+    private Runnable mUIRedrawRunnableContinous = new Runnable() {
         @Override
         public void run() {
-            if (mDoIt) {
-                floater.clearTiles();
-                updateFloater();
-                ColorfulFloaterView.this.invalidate();
-                mRedrawHandlerContinuous.postDelayed(this, floater.getMoveDelay());
-            } else {
-                mRedrawHandlerContinuous.removeCallbacksAndMessages(null);
-            }
+            floater.clearTiles();
+            updateFloater();
+            ColorfulFloaterView.this.invalidate();
+            mRedrawHandlerContinuous.postDelayed(this, floater.getMoveDelay());
         }
     };
-
-    public void startRedrawing() {
-        mDoIt = true;
-        mRedrawHandlerContinuous.post(mUIRedrawRunnableContinuous);
-    }
 
     public void redrawOnce() {
         mRedrawHandlerStatic.post(mUIRedrawRunnableStatic);
@@ -85,24 +83,32 @@ public class ColorfulFloaterView extends View {
     private Runnable mUIRedrawRunnableStatic = new Runnable() {
         @Override
         public void run() {
-            if (mDoIt) {
-                floater.clearTiles();
-                floater.drawTiles();
-                ColorfulFloaterView.this.invalidate();
-            } else {
-                floater.copyMTileGridtoMTileGridCopy();
-                floater.makeAllTilesInvisible();
-                ColorfulFloaterView.this.invalidate();
-            }
+            floater.clearTiles();
+            floater.drawTiles();
+            ColorfulFloaterView.this.invalidate();
         }
     };
+
+    public void stopRedrawing() {
+        mRedrawHandlerContinuous.removeCallbacks(mUIRedrawRunnableContinous);
+        floater.copyMTileGridtoMTileGridCopy();
+        floater.makeAllTilesInvisible();
+        ColorfulFloaterView.this.invalidate();
+    }
+
+    public void stopRunnable() {
+        mRedrawHandlerContinuous.removeCallbacks(mUIRedrawRunnableContinous);
+        floater.makeAllTilesInvisible();
+        ColorfulFloaterView.this.invalidate();
+    }
+
 
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
         // Load attributes
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TileView);
-        int tileSize = a.getDimensionPixelSize(R.styleable.TileView_tileSize, 12);
+        int tileSize = a.getDimensionPixelSize(R.styleable.TileView_tileSize, 60);
 
         a.recycle();
         Resources r = this.getContext().getResources();
@@ -124,7 +130,7 @@ public class ColorfulFloaterView extends View {
     private void initNewGame() {
         if( floater == null )
             floater = new ColorfulFloaterData();
-        floater.makeAllTilesInvisible();
+        stopRunnable();
         floater.initNewFloater();
         floater.createNewFloater();
         floater.setNextDirection( ColorfulFloaterData.SOUTH );
@@ -140,6 +146,7 @@ public class ColorfulFloaterView extends View {
     public Bundle saveState() {
         Bundle map = new Bundle();
 
+        map.putInt("mFloaterSize", Integer.valueOf(floater.getFloatSize()));
         map.putInt("mDirection", Integer.valueOf(floater.getDirection()));
         map.putInt("mNextDirection", Integer.valueOf(floater.getNextDirection()));
         map.putLong("mMoveDelay", Long.valueOf(floater.getMoveDelay()));
@@ -159,6 +166,7 @@ public class ColorfulFloaterView extends View {
     public void restoreState(Bundle icicle) {
         setMode(ColorfulFloaterData.PAUSE);
 
+        floater.setFloatSize( icicle.getInt("mFloaterSize") );
         floater.setDirection( icicle.getInt("mDirection") );
         floater.setNextDirection( icicle.getInt("mNextDirection") );
         floater.setMoveDelay(icicle.getInt("mMoveDelay") );
@@ -217,7 +225,7 @@ public class ColorfulFloaterView extends View {
         else if (direction == ColorfulFloater.MOVE_RIGHT) {
             floater.shiftFloatersRight();
             redrawOnce();
-        }
+       }
     }
 
     /**
@@ -226,12 +234,19 @@ public class ColorfulFloaterView extends View {
      *
      *
      */
-    public void setDependentViews(TextView msgView, View arrowView, View backgroundView) {
+    public void setDependentViews(TextView msgView, TextView scoreView, View arrowView, View backgroundView) {
         mStatusText = msgView;
+        mScoreText = scoreView;
         mArrowsView = arrowView;
         mBackgroundView = backgroundView;
     }
 
+    public void showScore(){
+        Resources res = getContext().getResources();
+        CharSequence str = "";
+        str = res.getString(R.string.mode_score, floater.getScore());
+        mScoreText.setText(str);
+    }
     /**
      * Updates the current mode of the application (RUNNING or PAUSED or the like) as well as sets
      * the visibility of textview for notification
@@ -240,11 +255,13 @@ public class ColorfulFloaterView extends View {
      */
     public void setMode(int newMode) {
         int oldMode = floater.getGameState();
-        floater.setGameState( newMode);
+        floater.setGameState(newMode);
 
+ 
         if (newMode == ColorfulFloaterData.RUNNING && oldMode != ColorfulFloaterData.RUNNING) {
             // hide the game instructions
             mStatusText.setVisibility(View.INVISIBLE);
+            mScoreText.setVisibility(View.VISIBLE);
             mArrowsView.setVisibility(View.VISIBLE);
             mBackgroundView.setVisibility(View.VISIBLE);
             return;
@@ -253,24 +270,23 @@ public class ColorfulFloaterView extends View {
         Resources res = getContext().getResources();
         CharSequence str = "";
         if (newMode == ColorfulFloaterData.PAUSE) {
-            mDoIt = false;
+            stopRedrawing();
             mArrowsView.setVisibility(View.GONE);
             mBackgroundView.setVisibility(View.GONE);
-            redrawOnce();
             str = res.getText(R.string.mode_pause);
         }
         if (newMode == ColorfulFloaterData.READY) {
+            mScoreText.setVisibility(View.GONE);
             mArrowsView.setVisibility(View.GONE);
             mBackgroundView.setVisibility(View.GONE);
-
             str = res.getText(R.string.mode_ready);
         }
         if (newMode == ColorfulFloaterData.LOSE) {
-            mDoIt = false;
+            stopRedrawing();
+            mScoreText.setVisibility(View.GONE);
             mArrowsView.setVisibility(View.GONE);
             mBackgroundView.setVisibility(View.GONE);
             str = res.getString(R.string.mode_lose, floater.getScore());
-            redrawOnce();
         }
 
         mStatusText.setText(str);
@@ -318,6 +334,7 @@ public class ColorfulFloaterView extends View {
             }
         }
         floater.drawTiles();
+        showScore();
     }
 
     @Override
@@ -328,7 +345,8 @@ public class ColorfulFloaterView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        floater.changeSize(w, h, oldw, oldh );
+        int sh = (int)mStatusText.getTextSize();
+        floater.changeSize(w, h - sh, oldw, oldh );
     }
 
     public void setLevel( int l){
