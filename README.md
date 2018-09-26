@@ -1,5 +1,5 @@
 # ColorfulFloater
-Here are the source code files for ColorfulFloater, a simple Android game that features falling floaters. Match 4 or more to gain points!
+Here are the source code files for ColorfulFloater, an Android game that features falling floaters. Match 3 or more depending on the settings to gain points!
 
 ## What is ColorfulFloater?
 ColorfulFloater is a puzzle game inspired by Columns, a 1989 Sega MegaDrive/Genesis game. This game features a few twists, though:
